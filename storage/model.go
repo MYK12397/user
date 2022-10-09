@@ -3,10 +3,15 @@ package storage
 import (
 	"context"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/martian/v3/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const (
+	userCollection = "users"
 )
 
 // User represents user object in request body.
@@ -28,7 +33,7 @@ func Save(user *User) error {
 
 	client := GetClient()
 
-	collection := client.Database("MYK").Collection("user")
+	collection := client.Database(os.Getenv("DB_NAME")).Collection(userCollection)
 	ctime := time.Now()
 	user.ID = primitive.NewObjectID().Hex()
 	user.Created = &ctime

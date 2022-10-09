@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -42,7 +43,7 @@ func Ping(client *mongo.Client, ctx context.Context) error {
 
 func GetClient() *mongo.Client {
 
-	uri := "mongodb+srv://admin:admin@cluster0.lol6s.mongodb.net/test?authSource=admin&replicaSet=atlas-cpfjlb-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+	uri := os.Getenv("DB_URI")
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
