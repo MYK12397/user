@@ -6,6 +6,7 @@ import (
 	"fmt"
 	fb "gocrud/firebase"
 	"gocrud/json/body"
+	"gocrud/layer"
 	"gocrud/storage"
 	"io/ioutil"
 	"log"
@@ -18,8 +19,8 @@ import (
 func main() {
 	r := httprouter.New()
 
-	r.POST("/user", UserSignupHandler)
-	r.POST("/resetPassword", resetPasswordHandler)
+	r.POST("/user", layer.BasicAuthHandler(UserSignupHandler))
+	r.POST("/resetPassword", layer.BasicAuthHandler(resetPasswordHandler))
 
 	fmt.Println("Starting server on :8080")
 	http.ListenAndServe(":8080", r)
