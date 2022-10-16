@@ -3,7 +3,6 @@ package layer
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -22,7 +21,6 @@ func BasicAuthHandler(next httprouter.Handle) httprouter.Handle {
 		if strings.HasPrefix(auth, basicAuthPrefix) {
 			user := []byte(os.Getenv("BASICAUTH_USERNAME"))
 			pass := []byte(os.Getenv("BASICAUTH_PASSWORD"))
-			fmt.Println(user, " ", pass)
 			// Check credentials
 			payload, err := base64.StdEncoding.DecodeString(auth[len(basicAuthPrefix):])
 			if err == nil {
