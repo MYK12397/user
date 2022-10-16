@@ -20,6 +20,7 @@ func main() {
 	r := httprouter.New()
 
 	r.POST("/user", layer.BasicAuthHandler(UserSignupHandler))
+	r.GET("/user/:id", layer.BasicAuthHandler(GetUserHandler))
 	r.POST("/resetPassword", layer.BasicAuthHandler(resetPasswordHandler))
 
 	fmt.Println("Starting server on :8080")
@@ -106,4 +107,23 @@ func resetPasswordHandler(rw http.ResponseWriter, r *http.Request, p httprouter.
 	}
 	rw.WriteHeader(http.StatusCreated)
 	json.NewEncoder(rw).Encode(resetPasswordLink)
+}
+
+// GetUserHandler is a handler for fetching existing user based on ID.
+func GetUserHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	defer r.Body.Close()
+
+	w.Header().Add("X-Request-ID", r.Header.Get("X-Request-ID"))
+	w.Header().Add("Content-Type", "application/json")
+
+	id := p.ByName("id")
+
+	user, err := storage.Read(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
 }

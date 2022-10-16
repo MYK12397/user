@@ -48,3 +48,21 @@ func Save(user *User) error {
 
 	return nil
 }
+
+func Read(id string) (*User, error) {
+	client := GetClient()
+
+	collection := client.Database(os.Getenv("DB_NAME")).Collection(userCollection)
+
+	var user *User
+	filter := primitive.M{"id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+
+	if err != nil {
+		log.Errorf("user not present in the database", http.StatusNotFound)
+		return nil, err
+	}
+
+	return user, nil
+
+}
